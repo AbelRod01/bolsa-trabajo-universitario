@@ -1,0 +1,193 @@
+.editar-perfil-container {
+  animation: fadeIn 0.4s ease-out;
+  padding-bottom: 40px;
+}
+
+.editar-perfil-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.editar-perfil-header h2 {
+  font-size: 1.8rem;
+  color: #1e293b;
+  font-weight: 800;
+}
+
+.editar-acciones-header, .editar-acciones-footer {
+  display: flex;
+  gap: 16px;
+}
+
+.editar-acciones-footer {
+  margin-top: 32px;
+  justify-content: flex-end;
+}
+
+.btn-cancelar {
+  padding: 10px 24px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancelar:hover {
+  background: #f8fafc;
+  color: #1e293b;
+  border-color: #cbd5e1;
+}
+
+.btn-guardar {
+  padding: 10px 24px;
+  background: #2563eb;
+  border: none;
+  color: white;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.btn-guardar:hover {
+  background: #1d4ed8;
+}
+
+.editar-perfil-form {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.form-seccion {
+  background: white;
+  padding: 32px;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+}
+
+.form-seccion h3 {
+  font-size: 1.2rem;
+  color: #1e293b;
+  margin-bottom: 24px;
+  font-weight: 700;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.form-ayuda {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-top: -16px;
+  margin-bottom: 16px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.form-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.form-grupo label {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #475569;
+}
+
+.textarea-estilizado {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.5;
+}
+
+.experiencia-editar-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.experiencia-editar-card h4 {
+  margin-bottom: 16px;
+  color: #334155;
+}
+
+.btn-eliminar {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.btn-eliminar:hover {
+  text-decoration: underline;
+}
+
+.btn-secundario {
+  width: 100%;
+  padding: 12px;
+  background: white;
+  border: 2px dashed #cbd5e1;
+  color: #64748b;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 8px;
+}
+
+.btn-secundario:hover {
+  border-color: #2563eb;
+  color: #2563eb;
+  background: #f0f7ff;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .editar-perfil-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .editar-acciones-header {
+    width: 100%;
+  }
+
+  .btn-cancelar, .btn-guardar {
+    flex: 1;
+    text-align: center;
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 380px) {
+  .form-seccion {
+    padding: 20px;
+  }
+  
+  .experiencia-editar-card {
+    padding: 16px;
+  }
+}

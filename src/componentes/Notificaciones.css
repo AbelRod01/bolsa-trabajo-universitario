@@ -1,0 +1,183 @@
+.page-notificaciones-container {
+  animation: fadeIn 0.3s ease;
+  padding-bottom: 40px;
+}
+
+.page-notificaciones-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.page-notificaciones-header h2 {
+  font-size: 1.8rem;
+  color: #1e293b;
+  font-weight: 800;
+}
+
+.page-notificaciones-header p {
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.btn-marcar-leidas {
+  padding: 10px 20px;
+  background: white;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-marcar-leidas:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #1e293b;
+}
+
+.notificaciones-list-card {
+  background: white;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+}
+
+.noti-list-item {
+  display: flex;
+  gap: 20px;
+  padding: 24px;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background-color 0.2s;
+}
+
+.noti-list-item:last-child {
+  border-bottom: none;
+}
+
+.noti-list-item:hover {
+  background-color: #f8fafc;
+}
+
+.noti-list-item.unread {
+  background-color: #f0f7ff;
+}
+
+.noti-list-item.unread:hover {
+  background-color: #e0f2fe;
+}
+
+.noti-icon-container {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.noti-icon-container.estado {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.noti-icon-container.match {
+  background: #ecfdf5;
+  color: #10b981;
+}
+
+.noti-icon-container.mensaje {
+  background: #eff6ff;
+  color: #3b82f6;
+}
+
+.noti-content-full {
+  flex: 1;
+}
+
+.noti-content-full h4 {
+  color: #1e293b;
+  font-size: 1.1rem;
+  margin-bottom: 6px;
+}
+
+.noti-content-full p {
+  color: #475569;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.noti-content-full strong {
+  color: #1e293b;
+}
+
+.noti-meta {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.noti-actions-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+}
+
+.btn-noti-accion {
+  padding: 8px 16px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-noti-accion:hover {
+  background: #1d4ed8;
+}
+
+.noti-list-item.empresa .btn-noti-accion {
+  background: #10b981;
+}
+
+.noti-list-item.empresa .btn-noti-accion:hover {
+  background: #059669;
+}
+
+/* Badge Novedad Circular */
+.unread-dot {
+  width: 10px;
+  height: 10px;
+  background: #3b82f6;
+  border-radius: 50%;
+  display: inline-block;
+  margin-top: 6px;
+}
+
+@media (max-width: 600px) {
+  .page-notificaciones-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .noti-list-item {
+    flex-direction: column;
+    padding: 16px;
+  }
+  
+  .noti-actions-side {
+    align-items: flex-start;
+  }
+}
