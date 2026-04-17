@@ -1,76 +1,105 @@
+/**
+ * PERFIL EMPRESA (PerfilEmpresa.js)
+ * ─────────────────────────────────────────────────────
+ * Vista de solo lectura del perfil corporativo de la empresa.
+ * Muestra toda la información pública que los estudiantes y el sistema usan:
+ *   - Nombre, sector e información básica
+ *   - Descripción corporativa (Misión/Visión)
+ *   - Beneficios para los trabajadores
+ *   - Datos de contacto (email, teléfono, sitio web)
+ *
+ * Nota: Para modificar datos se usa EditarPerfilEmpresa.js
+ */
 import React from 'react';
 import './css/VistasEmpresa.css';
-import '../estudiantes/css/PerfilEstudiante.css';
 
-const PerfilEmpresa = ({ onEditClick }) => {
+const PerfilEmpresa = ({ usuario, onEditClick }) => {
+  // Valores por defecto para evitar errores si el perfil está incompleto
+  const nombreEmpresa = usuario?.nombre || "Empresa Registrada";
+  const sectorEmpresa = usuario?.sector || "Sector no especificado";
+
   return (
-    <div className="perfil-empresa-container">
+    <div className="mis-ofertas-container">
+      
+      {/* ── TARJETA DE CABECERA ── */}
+      {/* Muestra el logo-inicial, nombre, sector, tamaño, año de fundación y botón de edición */}
       <div className="empresa-header-card">
-        <div className="empresa-logo-grande">T</div>
-        <div className="empresa-info-principal">
-          <h1>Tech Innovators S.A. de C.V.</h1>
-          <h2>Sector Tecnología y Desarrollo de Software</h2>
-          <p className="empresa-ubicacion">📍 Ciudad de México, México · 100-500 empleados</p>
+        {/* Avatar de empresa: la primera letra del nombre */}
+        <div className="empresa-logo-grande">
+          {nombreEmpresa[0].toUpperCase()}
         </div>
-        <button className="btn-editar-perfil" onClick={onEditClick}>Editar Perfil</button>
+        <div className="empresa-info-principal">
+          <h1>{nombreEmpresa}</h1>
+          <div className="empresa-badges">
+            <span className="oferta-empresa-badge activa">{sectorEmpresa}</span>
+            <span className="empresa-ubicacion" style={{marginLeft: '15px'}}>📍 {usuario?.ubicacion || "Ubicación no especificada"}</span>
+          </div>
+          {/* Metadatos de la empresa: tamaño y año de fundación */}
+          <div style={{marginTop: '10px', fontSize: '0.85rem', color: '#64748b'}}>
+            🏢 {usuario?.tamano_empresa || "Tamaño no especificado"} • 📅 Fundada en {usuario?.fundada_en || "---"}
+          </div>
+        </div>
+        <button className="btn-crear-oferta" onClick={onEditClick} style={{marginLeft: 'auto', background: '#1e293b'}}>
+          Editar Perfil
+        </button>
       </div>
 
-      <div className="perfil-grid">
-        <div className="perfil-columna-principal">
-          <section className="perfil-seccion">
-            <h3>Sobre Nosotros</h3>
-            <p>
-              En Tech Innovators, estamos creando el futuro de las aplicaciones web. Somos una startup 
-              en rápido crecimiento dedicada a ofrecer soluciones digitales de clase mundial para empresas de 
-              toda la región. Nos apasiona la tecnología y promover la participación de talento joven y 
-              estudiantil en nuestros equipos multidisciplinarios.
-            </p>
-          </section>
+      {/* ── CUADRÍCULA DE INFORMACIÓN DETALLADA ── */}
+      <div className="panels-grid" style={{display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px'}}>
+        
+        {/* Columna izquierda: Descripción corporativa y Beneficios */}
+        <div className="columna-izquierda" style={{display: 'flex', flexDirection: 'column', gap: '24px'}}>
+            {/* Panel "Sobre Nosotros": la misión y visión de la empresa */}
+            <div className="dashboard-panel">
+                <div className="panel-header">
+                    <h3>Sobre Nosotros</h3>
+                </div>
+                {/* pre-wrap respeta los saltos de línea que el usuario escribió en la edición */}
+                <p style={{whiteSpace: 'pre-wrap', color: '#475569', lineHeight: '1.6', padding: '24px'}}>
+                    {usuario?.descripcion || "Aún no has agregado una descripción corporativa. Completa tu perfil para que los estudiantes conozcan tu empresa."}
+                </p>
+            </div>
 
-          <section className="perfil-seccion">
-            <h3>Por qué trabajar con nosotros</h3>
-            <div className="item-experiencia">
-              <div className="exp-bullet"></div>
-              <div className="exp-contenido">
-                <h4>Cultura de Innovación</h4>
-                <p>Nuestros equipos están formados por gente curiosa y creativa que busca siempre aprender las últimas herramientas del mercado.</p>
-              </div>
+            {/* Panel de Beneficios: qué ofrece la empresa a sus empleados */}
+            <div className="dashboard-panel">
+                <div className="panel-header">
+                    <h3>🎁 Beneficios de trabajar con nosotros</h3>
+                </div>
+                <p style={{whiteSpace: 'pre-wrap', color: '#065f46', lineHeight: '1.6', padding: '24px', background: '#f0fdf4', borderRadius: '0 0 20px 20px'}}>
+                    {usuario?.beneficios || "Describe aquí los beneficios (Seguro, Sueldo, Home office, etc.) que ofreces a los estudiantes."}
+                </p>
             </div>
-            <div className="item-experiencia">
-              <div className="exp-bullet"></div>
-              <div className="exp-contenido">
-                <h4>Flexibilidad</h4>
-                <p>Ofrecemos múltiples esquemas que se adaptan a tus horarios universitarios. Modalidad híbrida y remoto disponible.</p>
-              </div>
-            </div>
-          </section>
         </div>
 
-        <aside className="perfil-columna-lateral">
-          <section className="perfil-seccion">
-            <h3>Tecnologías que usamos</h3>
-            <div className="skills-container">
-              <span className="skill-badge">React</span>
-              <span className="skill-badge">Node.js</span>
-              <span className="skill-badge">Python</span>
-              <span className="skill-badge">AWS</span>
-              <span className="skill-badge">GraphQL</span>
-              <span className="skill-badge">Tailwind CSS</span>
+        {/* Columna derecha: Datos de Contacto Oficiales */}
+        <div className="dashboard-panel">
+          <div className="panel-header">
+            <h3>Contacto Oficial</h3>
+          </div>
+          <div className="panel-list" style={{padding: '24px'}}>
+            {/* Email corporativo */}
+            <div className="info-item" style={{marginBottom: '20px', display: 'flex', flexDirection: 'column'}}>
+              <span style={{color: '#94a3b8', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.5px'}}>Email Corporativo</span>
+              <span style={{fontWeight: '600', color: '#1e293b'}}>{usuario?.email}</span>
             </div>
-          </section>
-
-          <section className="perfil-seccion">
-            <h3>Beneficios Clave</h3>
-            <div className="item-educacion">
-              <h4>Seguro Médico Mayores</h4>
-              <p>Seguro para todos nuestros colaboradores a tiempo completo y parcial.</p>
+            {/* Teléfono de reclutamiento */}
+            <div className="info-item" style={{marginBottom: '20px', display: 'flex', flexDirection: 'column'}}>
+              <span style={{color: '#94a3b8', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.5px'}}>Teléfono Reclutamiento</span>
+              <span style={{fontWeight: '600', color: '#1e293b'}}>{usuario?.contacto_telefono || "No especificado"}</span>
             </div>
-            <div className="item-educacion" style={{marginTop: '16px'}}>
-              <h4>Bono de Estudio</h4>
-              <p>Asignación trimestral para libros y plataformas educativas certificadas.</p>
+            {/* Sitio web: se muestra como enlace clickable si existe */}
+            <div className="info-item" style={{display: 'flex', flexDirection: 'column'}}>
+              <span style={{color: '#94a3b8', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.5px'}}>Sitio Web</span>
+              {usuario?.sitio_web ? (
+                 <a href={usuario.sitio_web} target="_blank" rel="noopener noreferrer" style={{color: '#2563eb', fontWeight: 'bold', textDecoration: 'none'}}>
+                   {usuario.sitio_web}
+                 </a>
+              ) : (
+                 <span style={{fontWeight: '600', color: '#1e293b'}}>No especificado</span>
+              )}
             </div>
-          </section>
-        </aside>
+          </div>
+        </div>
       </div>
     </div>
   );

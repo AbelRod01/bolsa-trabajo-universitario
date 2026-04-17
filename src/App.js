@@ -1,35 +1,160 @@
+/**
+ * COMPONENTE PRINCIPAL: App.js
+ * Centraliza la autenticación, el estado del usuario y la navegación principal.
+ */
+
 import React, { useState } from "react";
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import "./App.css";
-import { IconoCheck, IconoUsuario, IconoMaleta, IconoRayo } from "./componentes/Iconos";
+// Importación de iconos y vistas
+import {
+  IconoCheck,
+  IconoUsuario,
+  IconoMaleta,
+  IconoRayo,
+} from "./componentes/Iconos";
 import MenuPrincipalEstudiante from "./vistas/estudiantes/MenuPrincipal";
 import MenuPrincipalEmpresa from "./vistas/empresas/MenuPrincipalEmpresa";
+import { supabase } from "./supabaseClient";
 
 function App() {
-  const [esLogin, setEsLogin] = useState(true);
+  // --- ESTADOS DE LA APLICACIÓN ---
+  const [esLogin, setEsLogin] = useState(true); // Alterna entre Vista Login o Registro
   const [rol, setRol] = useState("estudiante"); // 'estudiante' o 'empresa'
-  const [estaLogueado, setEstaLogueado] = useState(false);
+  const [estaLogueado, setEstaLogueado] = useState(false); // ¿Hay alguien dentro?
+  const [usuarioLogueado, setUsuarioLogueado] = useState(null); // Perfil completo del usuario activo
+  const navigate = useNavigate();
 
-  const cambiarModo = () => setEsLogin(!esLogin);
-  const cambiarRol = (nuevoRol) => setRol(nuevoRol);
+  // --- ESTADOS DEL FORMULARIO ---
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [nombre, setNombre] = useState("");
+  const [apellido, setApellido] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+  const [cargando, setCargando] = useState(false); // Estado visual de espera
+  const [inicializando, setInicializando] = useState(true); // Para la restauración de sesión
 
-  const manejarLogin = (e) => {
+  // 🔄 EFECTO: RESTAURAR SESIÓN AL REFRESCAR
+  // Busca en localStorage si ya había alguien logueado para no pedir login de nuevo
+  React.useEffect(() => {
+    const restaurarSesion = async () => {
+      const storedUserId = localStorage.getItem("bolsa_userId");
+      const storedRol = localStorage.getItem("bolsa_rol");
+
+      if (storedUserId && storedRol) {
+        const tabla = storedRol === "estudiante" ? "alumno" : "empresa";
+        const idCol = storedRol === "estudiante" ? "alumno_id" : "empresa_id";
+
+        // Consultamos a Supabase para traer los datos frescos del perfil
+        const { data, error } = await supabase
+          .from(tabla)
+          .select("*")
+          .eq(idCol, parseInt(storedUserId))
+          .single();
+
+        if (data && !error) {
+          setRol(storedRol);
+          setUsuarioLogueado(data);
+          setEstaLogueado(true);
+        } else {
+          // Si hubo error o no existe, limpiamos basura del storage
+          localStorage.removeItem("bolsa_userId");
+          localStorage.removeItem("bolsa_rol");
+        }
+      }
+      setInicializando(false);
+    };
+
+    restaurarSesion();
+  }, []);
+
+  // --- MANEJADORES DE INTERFAZ ---
+  const cambiarModo = () => {
+    setEsLogin(!esLogin);
+    setErrorMsg("");
+  };
+  const cambiarRol = (nuevoRol) => {
+    setRol(nuevoRol);
+    setErrorMsg("");
+  };
+
+  // 🛡️ LÓGICA PRINCIPAL: LOGIN / REGISTRO
+  const manejarSubmit = async (e) => {
     e.preventDefault();
-    setEstaLogueado(true);
-  };
+    setErrorMsg("");
+    setCargando(true);
 
-  const manejarLogout = () => {
-    setEstaLogueado(false);
-  };
+    const tabla = rol === "estudiante" ? "alumno" : "empresa";
 
-  if (estaLogueado) {
-    if (rol === "estudiante") {
-      return <MenuPrincipalEstudiante onLogout={manejarLogout} />;
-    } else if (rol === "empresa") {
-      return <MenuPrincipalEmpresa onLogout={manejarLogout} />;
+    if (esLogin) {
+      // PROCESO DE INICIO DE SESIÓN
+      const { data, error } = await supabase
+        .from(tabla)
+        .select("*")
+        .eq("email", email)
+        .eq("password_hash", password)
+        .single();
+
+      if (error || !data) {
+        setErrorMsg("Correo o contraseña incorrectos, o rol equivocado.");
+      } else {
+        // Marcamos la sesión como activa y guardamos en storage
+        localStorage.setItem(
+          "bolsa_userId",
+          rol === "estudiante" ? data.alumno_id : data.empresa_id,
+        );
+        localStorage.setItem("bolsa_rol", rol);
+
+        setUsuarioLogueado(data);
+        setEstaLogueado(true);
+        navigate(rol === "estudiante" ? "/estudiante" : "/empresa");
+      }
+    } else {
+      // PROCESO DE REGISTRO DE NUEVA CUENTA
+      if (password !== confirmPassword) {
+        setErrorMsg("Las contraseñas no coinciden.");
+        setCargando(false);
+        return;
+      }
+
+      let datosInsertar = {};
+      if (rol === "estudiante") {
+        datosInsertar = { email, password_hash: password, nombre, apellido };
+      } else {
+        datosInsertar = { email, password_hash: password, nombre };
+      }
+
+      const { data, error } = await supabase
+        .from(tabla)
+        .insert([datosInsertar]);
+
+      if (error) {
+        if (error.code === "23505")
+          setErrorMsg("Este correo ya está registrado.");
+        else setErrorMsg("Error al registrar: " + error.message);
+      } else {
+        alert("¡Registro exitoso! Por favor inicia sesión.");
+        setEsLogin(true);
+      }
     }
-  }
+    setCargando(false);
+  };
 
-  return (
+  // 🚪 CERRAR SESIÓN
+  const manejarLogout = () => {
+    localStorage.removeItem("bolsa_userId");
+    localStorage.removeItem("bolsa_rol");
+    setEstaLogueado(false);
+    setUsuarioLogueado(null);
+    setEmail("");
+    setPassword("");
+    setNombre("");
+    setApellido("");
+    navigate("/");
+  };
+
+  const renderAuthView = (
     <div className="pantalla-principal">
       {/* Columna Izquierda: Información */}
       <div className="seccion-informacion">
@@ -44,8 +169,8 @@ function App() {
             Universitaria
           </h1>
           <p className="subtitulo-principal">
-            La plataforma que conecta a estudiantes universitarios con las mejores
-            oportunidades laborales.
+            La plataforma que conecta a estudiantes universitarios con las
+            mejores oportunidades laborales.
           </p>
         </div>
 
@@ -55,8 +180,11 @@ function App() {
               <IconoCheck />
             </div>
             <div className="texto-caracteristica">
-              <h3>Matching Inteligente</h3>
-              <p>Algoritmo avanzado que conecta candidatos con ofertas basándose en habilidades y experiencia.</p>
+              <h3>Matching con empresas</h3>
+              <p>
+                Una forma de visualizar en un solo lugar todas las posibles
+                ofertas de trabajo.
+              </p>
             </div>
           </div>
 
@@ -66,7 +194,10 @@ function App() {
             </div>
             <div className="texto-caracteristica">
               <h3>Perfiles Completos</h3>
-              <p>Muestra tu CV, habilidades, proyectos y enlaces profesionales en un solo lugar.</p>
+              <p>
+                Muestra tu CV, habilidades, proyectos y enlaces profesionales en
+                un solo lugar.
+              </p>
             </div>
           </div>
 
@@ -76,7 +207,10 @@ function App() {
             </div>
             <div className="texto-caracteristica">
               <h3>Para Empresas y Estudiantes</h3>
-              <p>Herramientas especializadas para ambos tipos de usuarios con paneles dedicados.</p>
+              <p>
+                Herramientas especializadas para ambos tipos de usuarios con
+                paneles dedicados.
+              </p>
             </div>
           </div>
         </div>
@@ -118,7 +252,10 @@ function App() {
           </div>
 
           <div className="encabezado-formulario">
-            <h2>{esLogin ? "Inicio de Sesión" : "Registro"} - {rol === "estudiante" ? "Alumno" : "Empresa"}</h2>
+            <h2>
+              {esLogin ? "Inicio de Sesión" : "Registro"} -{" "}
+              {rol === "estudiante" ? "Alumno" : "Empresa"}
+            </h2>
             <p>
               {esLogin
                 ? "Accede a tu perfil y encuentra oportunidades laborales"
@@ -126,15 +263,70 @@ function App() {
             </p>
           </div>
 
-          <form className="formulario-auth" onSubmit={manejarLogin}>
+          {errorMsg && (
+            <div
+              style={{
+                color: "red",
+                marginBottom: "15px",
+                backgroundColor: "#ffe6e6",
+                padding: "10px",
+                borderRadius: "5px",
+              }}
+            >
+              {errorMsg}
+            </div>
+          )}
+
+          <form className="formulario-auth" onSubmit={manejarSubmit}>
+            {!esLogin && (
+              <>
+                <div className="campo-grupo">
+                  <label htmlFor="nombre">
+                    {rol === "estudiante"
+                      ? "Nombre(s)"
+                      : "Nombre de la Empresa"}
+                  </label>
+                  <input
+                    type="text"
+                    id="nombre"
+                    className="input-estilizado"
+                    placeholder="Ej. Juan / Google"
+                    required
+                    value={nombre}
+                    onChange={(e) => setNombre(e.target.value)}
+                  />
+                </div>
+                {rol === "estudiante" && (
+                  <div className="campo-grupo">
+                    <label htmlFor="apellido">Apellidos</label>
+                    <input
+                      type="text"
+                      id="apellido"
+                      className="input-estilizado"
+                      placeholder="Ej. Pérez"
+                      required
+                      value={apellido}
+                      onChange={(e) => setApellido(e.target.value)}
+                    />
+                  </div>
+                )}
+              </>
+            )}
+
             <div className="campo-grupo">
-              <label htmlFor="correo">Correo Institucional</label>
+              <label htmlFor="correo">Correo Institucional / Profesional</label>
               <input
                 type="email"
                 id="correo"
                 className="input-estilizado"
-                placeholder={rol === "estudiante" ? "alumno@universidad.edu.mx" : "contacto@empresa.com"}
+                placeholder={
+                  rol === "estudiante"
+                    ? "alumno@universidad.edu.mx"
+                    : "contacto@empresa.com"
+                }
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
 
@@ -146,24 +338,38 @@ function App() {
                 className="input-estilizado"
                 placeholder="••••••••"
                 required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
 
             {!esLogin && (
               <div className="campo-grupo">
-                <label htmlFor="confirmarContrasena">Confirmar Contraseña</label>
+                <label htmlFor="confirmarContrasena">
+                  Confirmar Contraseña
+                </label>
                 <input
                   type="password"
                   id="confirmarContrasena"
                   className="input-estilizado"
                   placeholder="••••••••"
                   required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                 />
               </div>
             )}
 
-            <button type="submit" className="boton-ingresar">
-              {esLogin ? `Ingresar como ${rol === "estudiante" ? "Alumno" : "Empresa"}` : "Registrarse ahora"}
+            <button
+              type="submit"
+              className="boton-ingresar"
+              disabled={cargando}
+            >
+              {cargando
+                ? "Cargando..."
+                : esLogin
+                  ? `Ingresar como ${rol === "estudiante" ? "Alumno" : "Empresa"}`
+                  : "Registrarse ahora"}
             </button>
           </form>
 
@@ -182,12 +388,75 @@ function App() {
             </p>
           </div>
         </div>
-        
+
         <p className="footer-legal">
-          Al iniciar sesión, aceptas nuestros términos de servicio y política de privacidad
+          Al iniciar sesión, aceptas nuestros términos de servicio y política de
+          privacidad
         </p>
       </div>
     </div>
+  );
+
+  if (inicializando) {
+    return (
+      <div
+        style={{
+          height: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "#f8fafc",
+          color: "#1e293b",
+          fontWeight: "700",
+        }}
+      >
+        🔄 Restaurando sesión...
+      </div>
+    );
+  }
+
+  return (
+    <Routes>
+      <Route
+        path="/"
+        element={
+          !estaLogueado ? (
+            renderAuthView
+          ) : (
+            <Navigate to={rol === "estudiante" ? "/estudiante" : "/empresa"} />
+          )
+        }
+      />
+      <Route
+        path="/estudiante/*"
+        element={
+          estaLogueado && rol === "estudiante" ? (
+            <MenuPrincipalEstudiante
+              onLogout={manejarLogout}
+              usuario={usuarioLogueado}
+              setUsuario={setUsuarioLogueado}
+            />
+          ) : (
+            <Navigate to="/" />
+          )
+        }
+      />
+      <Route
+        path="/empresa/*"
+        element={
+          estaLogueado && rol === "empresa" ? (
+            <MenuPrincipalEmpresa
+              onLogout={manejarLogout}
+              usuario={usuarioLogueado}
+              setUsuario={setUsuarioLogueado}
+            />
+          ) : (
+            <Navigate to="/" />
+          )
+        }
+      />
+      <Route path="*" element={<Navigate to="/" />} />
+    </Routes>
   );
 }
 

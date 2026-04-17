@@ -205,6 +205,11 @@
   margin-bottom: 24px;
 }
 
+.detalle-oferta-header h2 {
+  color: #1e293b;
+  font-weight: 800;
+}
+
 .btn-volver {
   background: none;
   border: none;
@@ -484,4 +489,80 @@
   background: white;
   color: #475569;
   font-weight: 600;
+}
+
+/* ── RESPONSIVE VISTAS EMPRESA ─ 480px ── */
+@media (max-width: 480px) {
+  .mis-ofertas-header h2 {
+    font-size: 1.4rem;
+  }
+  .empresa-header-card {
+    padding: 20px 16px;
+    gap: 16px;
+  }
+  .empresa-logo-grande {
+    width: 64px;
+    height: 64px;
+    font-size: 1.75rem;
+  }
+  .empresa-info-principal h1 {
+    font-size: 1.4rem;
+  }
+  .editar-oferta-form {
+    padding: 20px;
+    border-radius: 16px;
+  }
+  .oferta-empresa-card {
+    padding: 16px;
+    border-radius: 16px;
+  }
+  /* Botones de acción de oferta en columna en pantallas pequeñas */
+  .oferta-empresa-actions {
+    flex-direction: column;
+  }
+}
+
+/* ── RESPONSIVE VISTAS EMPRESA ─ 360px ── */
+@media (max-width: 360px) {
+  .mis-ofertas-header {
+    gap: 10px;
+  }
+  .mis-ofertas-header h2 {
+    font-size: 1.2rem;
+  }
+  .btn-crear-oferta {
+    padding: 8px 14px;
+    font-size: 0.85rem;
+    width: 100%;
+    text-align: center;
+  }
+  .empresa-header-card {
+    padding: 16px 12px;
+  }
+  .empresa-logo-grande {
+    width: 56px;
+    height: 56px;
+    font-size: 1.5rem;
+    border-radius: 14px;
+  }
+  .empresa-info-principal h1 {
+    font-size: 1.2rem;
+  }
+  .empresa-info-principal h2 {
+    font-size: 0.95rem;
+  }
+  .editar-oferta-form {
+    padding: 14px;
+  }
+  .oferta-empresa-card {
+    padding: 14px;
+  }
+  .oferta-empresa-card h3 {
+    font-size: 1rem;
+  }
+  /* Grilla de candidatos siempre en 1 columna */
+  .candidatos-grid-completo {
+    grid-template-columns: 1fr !important;
+    gap: 16px;
+  }
 }

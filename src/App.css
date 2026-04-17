@@ -320,3 +320,81 @@ body {
 .seccion-informacion > *:nth-child(2) { animation-delay: 0.2s; }
 .seccion-informacion > *:nth-child(3) { animation-delay: 0.3s; }
 .seccion-informacion > *:nth-child(4) { animation-delay: 0.4s; }
+
+/* ── RESPONSIVE LOGIN ─ 480px ── */
+@media (max-width: 480px) {
+  .pantalla-principal {
+    padding: 1rem;
+    gap: 2rem;
+  }
+  .titulo-principal {
+    font-size: 2.2rem;
+  }
+  .tarjeta-auth {
+    padding: 1.5rem;
+    border-radius: 16px;
+  }
+  .encabezado-formulario h2 {
+    font-size: 1.2rem;
+  }
+  .barra-estadisticas {
+    gap: 1.2rem;
+  }
+  .dato-estadistico h4 {
+    font-size: 1.2rem;
+  }
+}
+
+/* ── RESPONSIVE LOGIN ─ 330px ── */
+@media (max-width: 360px) {
+  .pantalla-principal {
+    padding: 0.75rem;
+    gap: 1.5rem;
+  }
+  .titulo-principal {
+    font-size: 1.8rem;
+  }
+  .tarjeta-auth {
+    padding: 1rem;
+  }
+  .tabs-rol {
+    gap: 4px;
+  }
+  .tab-boton {
+    padding: 0.5rem 0.25rem;
+    font-size: 0.8rem;
+    gap: 4px;
+  }
+  .tab-boton svg {
+    width: 14px;
+    height: 14px;
+  }
+  .encabezado-formulario {
+    margin-bottom: 1rem;
+  }
+  .campo-grupo {
+    margin-bottom: 1rem;
+  }
+  .input-estilizado {
+    padding: 0.7rem 0.75rem;
+    font-size: 0.9rem;
+  }
+  .boton-ingresar {
+    padding: 0.8rem;
+    font-size: 0.9rem;
+  }
+  .barra-estadisticas {
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .lista-caracteristicas {
+    gap: 1rem;
+  }
+  .texto-caracteristica h3 {
+    font-size: 0.95rem;
+  }
+  .texto-caracteristica p {
+    font-size: 0.8rem;
+  }
+}

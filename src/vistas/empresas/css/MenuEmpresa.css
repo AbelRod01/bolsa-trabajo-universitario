@@ -305,3 +305,79 @@
     width: 100%;
   }
 }
+
+/* ── RESPONSIVE MENU EMPRESA ─ 480px ── */
+@media (max-width: 480px) {
+  .stats-grid-empresa {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .stat-card-empresa {
+    padding: 14px 16px;
+    gap: 14px;
+  }
+  .stat-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+  }
+  .stat-icon-wrapper svg {
+    width: 22px;
+    height: 22px;
+  }
+  .stat-info h3 {
+    font-size: 1.5rem;
+  }
+  .panels-grid {
+    gap: 20px;
+  }
+  .panel-header {
+    padding: 16px;
+  }
+  .panel-list {
+    padding: 8px 16px 16px 16px;
+    gap: 12px;
+  }
+}
+
+/* ── RESPONSIVE MENU EMPRESA ─ 360px ── */
+@media (max-width: 360px) {
+  .stats-grid-empresa {
+    gap: 12px;
+  }
+  .stat-card-empresa {
+    padding: 12px;
+    gap: 12px;
+  }
+  .stat-info h3 {
+    font-size: 1.3rem;
+  }
+  .stat-info span {
+    font-size: 0.8rem;
+  }
+  .panel-header h3 {
+    font-size: 1rem;
+  }
+  .candidato-item {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .candidato-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 0.85rem;
+    border-radius: 8px;
+  }
+  .candidato-info h4 {
+    font-size: 0.9rem;
+  }
+  .candidato-info span {
+    font-size: 0.78rem;
+  }
+  .oferta-item-mini {
+    padding: 12px;
+  }
+  .oferta-info-mini h4 {
+    font-size: 0.9rem;
+  }
+}

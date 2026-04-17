@@ -93,7 +93,7 @@
 
 .top-bar {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   margin-bottom: 40px;
 }
@@ -685,13 +685,7 @@
   }
 
   .top-bar {
-    flex-direction: column;
     gap: 16px;
-    align-items: flex-start;
-  }
-
-  .search-container {
-    width: 100%;
   }
 
   .top-bar-actions {

@@ -1,70 +1,105 @@
+/**
+ * PERFIL ESTUDIANTE (PerfilEstudiante.js)
+ * ─────────────────────────────────────────────────────
+ * Vista de solo lectura del perfil profesional del alumno.
+ * Muestra toda la información que las empresas verán del candidato:
+ *   - Nombre, carrera, universidad
+ *   - Descripción personal ("Sobre Mí")
+ *   - Experiencia y proyectos
+ *   - Habilidades técnicas (como chips/badges)
+ *   - Enlace al CV en PDF
+ *
+ * Nota: Este componente NO edita datos. Para editar, se usa EditarPerfilEstudiante.js
+ */
 import React from 'react';
 import './css/PerfilEstudiante.css';
 
-const PerfilEstudiante = ({ onEditClick }) => {
+const PerfilEstudiante = ({ usuario, onEditClick }) => {
+  // Manejo de valores por defecto si el usuario no tiene datos completos aún
+  const nombreMostrado = (usuario?.nombre && usuario?.apellido) 
+    ? `${usuario.nombre} ${usuario.apellido}` 
+    : (usuario?.nombre || "Usuario");
+    
+  // Las iniciales se usan para el avatar grande del perfil
+  const iniciales = usuario?.nombre 
+    ? `${usuario.nombre[0]}${usuario.apellido?.[0] || ''}`.toUpperCase() 
+    : "U";
+
+  const carreraMostrada = usuario?.carrera || "Carrera no especificada";
+
   return (
     <div className="perfil-container">
+      
+      {/* ── TARJETA DE CABECERA DEL PERFIL ── */}
+      {/* Contiene el avatar, nombre principal, carrera y los botones de acción */}
       <div className="perfil-header-card">
-        <div className="perfil-avatar-grande">JP</div>
+        <div className="perfil-avatar-grande">{iniciales}</div>
         <div className="perfil-info-principal">
-          <h1>Juan Pérez</h1>
-          <h2>Ingeniería en Software · 8vo Semestre</h2>
-          <p className="perfil-ubicacion">📍 Ciudad de México, México</p>
+          <h1>{nombreMostrado}</h1>
+          <h2>{carreraMostrada}</h2>
+          <p className="perfil-ubicacion">📍 {usuario?.universidad || "Universidad no especificada"}</p>
         </div>
-        <button className="btn-editar-perfil" onClick={onEditClick}>Editar Perfil</button>
+        <div className="perfil-header-acciones">
+            {/* Botón para ir al formulario de edición */}
+            <button className="btn-editar-perfil" onClick={onEditClick}>Editar Perfil</button>
+            {/* El botón de CV solo aparece si el alumno ha subido un archivo */}
+            {usuario?.cv_url && (
+                <a href={usuario.cv_url} target="_blank" rel="noopener noreferrer" className="btn-cv-perfil">
+                   📄 Ver Currículum
+                </a>
+            )}
+        </div>
       </div>
 
+      {/* ── CUADRÍCULA DE INFORMACIÓN DETALLADA ── */}
       <div className="perfil-grid">
+        
+        {/* Columna izquierda: Sobre Mí y Experiencia */}
         <div className="perfil-columna-principal">
           <section className="perfil-seccion">
             <h3>Sobre Mí</h3>
             <p>
-              Estudiante apasionado por el desarrollo web y la creación de interfaces de usuario intuitivas. 
-              Busco mi primera oportunidad profesional como desarrollador Frontend para aplicar mis 
-              conocimientos en React, JavaScript y diseño CSS moderno.
+              {usuario?.descripcion || "Aún no has agregado una descripción a tu perfil."}
             </p>
           </section>
 
           <section className="perfil-seccion">
-            <h3>Experiencia & Proyectos Académicos</h3>
+            <h3>Experiencia & Proyectos</h3>
             <div className="item-experiencia">
-              <div className="exp-bullet"></div>
-              <div className="exp-contenido">
-                <h4>Clon de E-commerce</h4>
-                <span className="exp-fecha">Ene 2024 - Presente</span>
-                <p>Desarrollo de una plataforma de ventas online usando React y Node.js para la clase de Ingeniería Web.</p>
-              </div>
-            </div>
-            <div className="item-experiencia">
-              <div className="exp-bullet"></div>
-              <div className="exp-contenido">
-                <h4>Líder de Desarrollo en Hackathon Universitario</h4>
-                <span className="exp-fecha">Oct 2023</span>
-                <p>Implementación de un sistema de gestión de donaciones que obtuvo el 2° lugar a nivel local.</p>
-              </div>
+              {usuario?.proyectos ? (
+                  // whiteSpace: pre-wrap respeta los saltos de línea que el usuario escribió
+                  <p style={{whiteSpace: 'pre-wrap'}}>{usuario.proyectos}</p>
+              ) : (
+                  <p>Completa tu perfil para que las empresas puedan ver tus proyectos y experiencia académica.</p>
+              )}
             </div>
           </section>
         </div>
 
+        {/* Columna derecha/lateral: Habilidades y Formación */}
         <aside className="perfil-columna-lateral">
           <section className="perfil-seccion">
             <h3>Habilidades Técnicas</h3>
             <div className="skills-container">
-              <span className="skill-badge">JavaScript (ES6+)</span>
-              <span className="skill-badge">React.js</span>
-              <span className="skill-badge">HTML5 & CSS3</span>
-              <span className="skill-badge">Git / GitHub</span>
-              <span className="skill-badge">Figma</span>
-              <span className="skill-badge">Node.js Básico</span>
+              {usuario?.habilidades ? (
+                // Las habilidades se guardan como texto separado por comas (ej: "React, SQL, Excel")
+                // Aquí las convertimos en chips visuales individuales
+                usuario.habilidades.split(',').map((skill, index) => (
+                  <span key={index} className="skill-badge">{skill.trim()}</span>
+                ))
+              ) : (
+                <p style={{ fontSize: '0.9rem', color: '#666' }}>No hay habilidades registradas.</p>
+              )}
             </div>
           </section>
 
+          {/* Datos académicos del alumno */}
           <section className="perfil-seccion">
             <h3>Educación</h3>
             <div className="item-educacion">
-              <h4>Universidad Nacional Abierta</h4>
-              <p>Ingeniería en Software</p>
-              <span className="edu-fecha">2020 - 2025</span>
+              <h4>{usuario?.universidad || "Universidad no especificada"}</h4>
+              <p>{carreraMostrada}</p>
+              <span className="edu-fecha">{usuario?.periodo_educacion || "Periodo no especificado"}</span>
             </div>
           </section>
         </aside>
